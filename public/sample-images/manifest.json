@@ -1,0 +1,74 @@
+[
+  {
+    "id": "gunung-fajar",
+    "title": "Gunung Saat Fajar",
+    "category": "Alam",
+    "url": "/sample-images/gunung-fajar.svg",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "id": "danau-hutan",
+    "title": "Danau di Tepi Hutan",
+    "category": "Alam",
+    "url": "/sample-images/danau-hutan.svg",
+    "width": 1500,
+    "height": 1000
+  },
+  {
+    "id": "bukit-pasir",
+    "title": "Bukit Pasir Senja",
+    "category": "Alam",
+    "url": "/sample-images/bukit-pasir.svg",
+    "width": 1600,
+    "height": 900
+  },
+  {
+    "id": "kupu-kupu",
+    "title": "Kupu-kupu di Taman",
+    "category": "Hewan",
+    "url": "/sample-images/kupu-kupu.svg",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "kolam-koi",
+    "title": "Kolam Ikan Koi",
+    "category": "Hewan",
+    "url": "/sample-images/kolam-koi.svg",
+    "width": 1300,
+    "height": 1000
+  },
+  {
+    "id": "kota-malam",
+    "title": "Kota di Malam Hari",
+    "category": "Kota",
+    "url": "/sample-images/kota-malam.svg",
+    "width": 1800,
+    "height": 1000
+  },
+  {
+    "id": "nebula",
+    "title": "Nebula & Planet Bercincin",
+    "category": "Angkasa",
+    "url": "/sample-images/nebula.svg",
+    "width": 1600,
+    "height": 1000
+  },
+  {
+    "id": "mozaik",
+    "title": "Mozaik Kaca",
+    "category": "Abstrak",
+    "url": "/sample-images/mozaik.svg",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "gelombang",
+    "title": "Gelombang Warna",
+    "category": "Abstrak",
+    "url": "/sample-images/gelombang.svg",
+    "width": 1400,
+    "height": 1000
+  }
+]
