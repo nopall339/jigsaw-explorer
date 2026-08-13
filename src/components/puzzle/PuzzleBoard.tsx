@@ -298,18 +298,37 @@ export default function PuzzleBoard({ room }: PuzzleBoardProps) {
     socket.resetRoom();
   };
 
+  // Toast notification state
+  const [showShareToast, setShowShareToast] = useState(false);
+
   const handleShare = async () => {
     const url = window.location.href;
+    
+    // Debug: pastikan URL tidak kosong
+    console.log('[handleShare] URL to copy:', url);
+    console.log('[handleShare] roomId:', room.id);
+    
+    if (!url || url.trim() === '') {
+      console.error('[handleShare] URL is empty!');
+      alert('Error: Link tidak valid. Coba refresh halaman.');
+      return;
+    }
+    
     try {
       await navigator.clipboard.writeText(url);
-      alert('Link disalin! Bagikan ke teman untuk main bareng.');
-    } catch {
+      console.log('[handleShare] Copy success:', url);
+      // Non-blocking toast instead of alert
+      setShowShareToast(true);
+      setTimeout(() => setShowShareToast(false), 3000);
+    } catch (err) {
+      console.error('[handleShare] Copy failed:', err);
+      // Fallback: prompt is less blocking than alert
       prompt('Salin link ini untuk dibagikan:', url);
     }
   };
 
   return (
-    <div className="flex h-screen flex-col bg-board-950">
+    <div className="flex min-h-screen flex-col bg-board-950 overflow-y-auto">
       {/* Minimalist Top Bar - Hanya info penting */}
       <div className="flex items-center justify-between border-b border-white/10 bg-board-900 px-4 py-2">
         <div>
@@ -532,6 +551,13 @@ export default function PuzzleBoard({ room }: PuzzleBoardProps) {
         {!socket.isConnected && (
           <div className="absolute bottom-4 left-4 rounded-lg bg-rose-500/90 px-4 py-2 text-sm text-white">
             Koneksi terputus...
+          </div>
+        )}
+
+        {/* Share Toast Notification */}
+        {showShareToast && (
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 animate-in fade-in slide-in-from-top-2 rounded-lg bg-emerald-500/90 px-6 py-3 text-sm font-medium text-white shadow-lg backdrop-blur-sm">
+            ✅ Link disalin! Bagikan ke teman untuk main bareng.
           </div>
         )}
       </div>
