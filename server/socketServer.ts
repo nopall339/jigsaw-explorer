@@ -211,11 +211,17 @@ app.prepare().then(() => {
       const pieceHeight = boardHeight / grid.rows;
       const shortSide = Math.min(pieceWidth, pieceHeight);
       
+      // Match client's tabSize and padding calculation from layout.ts
+      const TAB_RATIO = 0.22;
+      const TAB_OUTSET_FACTOR = 1.14;
+      const tabSize = shortSide * TAB_RATIO;
+      const padding = Math.ceil(tabSize * TAB_OUTSET_FACTOR) + 2;
+      
       // Match client's snapTolerance calculation from layout.ts line 87
       const snapTolerance = Math.max(7, Math.min(32, shortSide * 0.36));
       
       const totalPieceArea = grid.pieceCount * pieceWidth * pieceHeight * 2.1;
-      const minMargin = Math.max(pieceWidth, pieceHeight) * 1.6;
+      const minMargin = Math.max(pieceWidth, pieceHeight) * 1.6 + padding;
       const b = 2 * (boardWidth + boardHeight);
       const margin = Math.max(minMargin, (-b + Math.sqrt(b * b + 16 * totalPieceArea)) / 8);
 
@@ -227,6 +233,16 @@ app.prepare().then(() => {
 
       const correctX = margin + col * pieceWidth;
       const correctY = margin + row * pieceHeight;
+
+      console.log('[piece:drop:coords]', {
+        pieceId: payload.pieceId,
+        margin: margin.toFixed(2),
+        padding: padding.toFixed(2),
+        correctX: correctX.toFixed(2),
+        correctY: correctY.toFixed(2),
+        dropX: payload.x.toFixed(2),
+        dropY: payload.y.toFixed(2),
+      });
 
       const result = resolveDrop({
         piece: {
