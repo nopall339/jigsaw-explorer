@@ -58,9 +58,21 @@ export interface DropResult {
  * jadi hasilnya selalu konsisten.
  */
 export function resolveDrop({ piece, x, y, rotation, tolerance }: DropInput): DropResult {
-  const near = Math.hypot(x - piece.correctX, y - piece.correctY) <= tolerance;
+  const distance = Math.hypot(x - piece.correctX, y - piece.correctY);
+  const near = distance <= tolerance;
+  const rotationAligned = isRotationAligned(rotation);
+  
+  console.log('[resolveDrop]', piece.id, {
+    distance: distance.toFixed(2),
+    tolerance,
+    near,
+    rotation: rotation.toFixed(2),
+    rotationOffset: rotationOffset(rotation).toFixed(2),
+    rotationAligned,
+    willSnap: near && rotationAligned
+  });
 
-  if (near && isRotationAligned(rotation)) {
+  if (near && rotationAligned) {
     return { x: piece.correctX, y: piece.correctY, rotation: 0, isPlaced: true };
   }
 

@@ -286,6 +286,7 @@ export default function PuzzleBoard({ room }: PuzzleBoardProps) {
   const handlePieceDragEnd = useCallback(
     (piece: PuzzlePiece, x: number, y: number) => {
       const result = puzzleState.drop(piece.id, x, y);
+      console.log('[drop] pieceId:', piece.id, 'result:', result, 'progress:', puzzleState.progress);
       if (result) {
         socket.dropPiece({
           pieceId: piece.id,

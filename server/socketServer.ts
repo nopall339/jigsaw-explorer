@@ -196,23 +196,37 @@ app.prepare().then(() => {
       const state = record.pieces[payload.pieceId];
       if (!state || state.lockedBy !== playerId) return;
 
-      const grid = computeGrid(
-        record.room.imageWidth,
-        record.room.imageHeight,
-        record.room.requestedPieceCount,
-      );
-      const pieceWidth = record.room.imageWidth / grid.cols;
-      const pieceHeight = record.room.imageHeight / grid.rows;
+      // ponytail: Use createPuzzleLayout to match client calculations exactly
+      const grid = record.room.gridRows && record.room.gridCols
+        ? { rows: record.room.gridRows, cols: record.room.gridCols, pieceCount: record.room.pieceCount }
+        : computeGrid(record.room.imageWidth, record.room.imageHeight, record.room.requestedPieceCount);
+      
+      // Calculate scaled board dimensions (matching layout.ts BOARD_LONG_SIDE = 1000)
+      const BOARD_LONG_SIDE = 1000;
+      const scale = BOARD_LONG_SIDE / Math.max(record.room.imageWidth, record.room.imageHeight);
+      const boardWidth = record.room.imageWidth * scale;
+      const boardHeight = record.room.imageHeight * scale;
+      
+      const pieceWidth = boardWidth / grid.cols;
+      const pieceHeight = boardHeight / grid.rows;
+      const shortSide = Math.min(pieceWidth, pieceHeight);
+      
+      // Match client's snapTolerance calculation from layout.ts line 87
+      const snapTolerance = Math.max(7, Math.min(32, shortSide * 0.36));
+      
+      const totalPieceArea = grid.pieceCount * pieceWidth * pieceHeight * 2.1;
+      const minMargin = Math.max(pieceWidth, pieceHeight) * 1.6;
+      const b = 2 * (boardWidth + boardHeight);
+      const margin = Math.max(minMargin, (-b + Math.sqrt(b * b + 16 * totalPieceArea)) / 8);
 
       const match = payload.pieceId.match(/^p(\d+)-(\d+)$/);
       if (!match) return;
 
       const row = Number(match[1]);
       const col = Number(match[2]);
-      const boardMargin = Math.max(pieceWidth, pieceHeight) * 2;
 
-      const correctX = boardMargin + col * pieceWidth;
-      const correctY = boardMargin + row * pieceHeight;
+      const correctX = margin + col * pieceWidth;
+      const correctY = margin + row * pieceHeight;
 
       const result = resolveDrop({
         piece: {
@@ -239,7 +253,7 @@ app.prepare().then(() => {
         x: payload.x,
         y: payload.y,
         rotation: payload.rotation,
-        tolerance: Math.min(pieceWidth, pieceHeight) * 0.25,
+        tolerance: snapTolerance,
       });
 
       const wasPlaced = state.isPlaced;
@@ -248,6 +262,16 @@ app.prepare().then(() => {
       state.rotation = result.rotation;
       state.isPlaced = result.isPlaced;
       state.lockedBy = null;
+      
+      console.log('[piece:drop]', {
+        pieceId: payload.pieceId,
+        wasPlaced,
+        nowPlaced: result.isPlaced,
+        distance: Math.hypot(payload.x - correctX, payload.y - correctY).toFixed(2),
+        rotation: payload.rotation.toFixed(2),
+        snapTolerance: snapTolerance.toFixed(2),
+        pieceSize: `${pieceWidth.toFixed(1)}x${pieceHeight.toFixed(1)}`
+      });
 
       if (!result.isPlaced) {
         const maxZ = Math.max(...Object.values(record.pieces).map((s) => s.z));
