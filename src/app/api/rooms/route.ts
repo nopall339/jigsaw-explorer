@@ -1,7 +1,7 @@
 import { apiError, jsonResponse } from '@/lib/api/respond';
 import { isValidRoomId } from '@/lib/ids';
 import { resolveRoomImage } from '@/lib/rooms/resolveImage';
-import { createRoom, deleteRoom, getRoom, roomCount } from '@/lib/rooms/roomStore';
+import { createRoom, getRoom, roomCount } from '@/lib/rooms/roomStore';
 import { parseCreateRoomRequest } from '@/lib/rooms/validation';
 import type { CreateRoomResponse } from '@/types';
 

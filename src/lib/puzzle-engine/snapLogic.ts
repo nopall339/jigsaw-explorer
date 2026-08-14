@@ -61,18 +61,6 @@ export function resolveDrop({ piece, x, y, rotation, tolerance }: DropInput): Dr
   const distance = Math.hypot(x - piece.correctX, y - piece.correctY);
   const near = distance <= tolerance;
   const rotationAligned = isRotationAligned(rotation);
-  
-  console.log('[resolveDrop]', piece.id, {
-    dropPos: `${x.toFixed(1)},${y.toFixed(1)}`,
-    correctPos: `${piece.correctX.toFixed(1)},${piece.correctY.toFixed(1)}`,
-    distance: distance.toFixed(2),
-    tolerance,
-    near,
-    rotation: rotation.toFixed(2),
-    rotationOffset: rotationOffset(rotation).toFixed(2),
-    rotationAligned,
-    willSnap: near && rotationAligned
-  });
 
   if (near && rotationAligned) {
     return { x: piece.correctX, y: piece.correctY, rotation: 0, isPlaced: true };

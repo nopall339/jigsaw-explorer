@@ -285,8 +285,13 @@ export default function PuzzleBoard({ room }: PuzzleBoardProps) {
 
   const handlePieceDragEnd = useCallback(
     (piece: PuzzlePiece, x: number, y: number) => {
+      // ponytail: Konva gives us coordinates already in world space relative to Stage
+      // Stage position and scale are already applied by Konva internally
+      const distance = Math.hypot(x - piece.correctX, y - piece.correctY);
+      console.log(`[dragEnd] piece=${piece.id} raw=(${x.toFixed(1)},${y.toFixed(1)}) correct=(${piece.correctX.toFixed(1)},${piece.correctY.toFixed(1)}) dist=${distance.toFixed(1)} scale=${stageScale.toFixed(2)}`);
+      
       const result = puzzleState.drop(piece.id, x, y);
-      console.log('[drop] pieceId:', piece.id, 'result:', result, 'progress:', puzzleState.progress);
+      console.log(`[dragEnd result] isPlaced=${result?.isPlaced} final=(${result?.x.toFixed(1)},${result?.y.toFixed(1)})`);
       if (result) {
         socket.dropPiece({
           pieceId: piece.id,
@@ -296,7 +301,7 @@ export default function PuzzleBoard({ room }: PuzzleBoardProps) {
         });
       }
     },
-    [socket, puzzleState],
+    [socket, puzzleState, stageScale, stagePos],
   );
 
   const handleReset = () => {
