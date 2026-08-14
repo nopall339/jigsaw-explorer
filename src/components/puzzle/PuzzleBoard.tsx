@@ -369,6 +369,38 @@ export default function PuzzleBoard({ room }: PuzzleBoardProps) {
           draggable={false}
         >
           <Layer>
+            {/* Snap zone indicators - show correct positions with highlight */}
+            {sprites.status === 'ready' && sprites.sprites &&
+              puzzleState.pieces.filter(p => !p.isPlaced).map((piece) => {
+                const sprite = sprites.sprites?.byId.get(piece.id);
+                if (!sprite) return null;
+                
+                // Calculate distance to correct position
+                const dx = piece.currentX - piece.correctX;
+                const dy = piece.currentY - piece.correctY;
+                const distance = Math.hypot(dx, dy);
+                const isNearCorrectSpot = distance <= puzzleState.layout.snapTolerance;
+                const isRotationOk = Math.abs(piece.rotation % 360) <= 14 || Math.abs(360 - (piece.rotation % 360)) <= 14;
+                
+                // Show green highlight when piece is close AND rotation is correct
+                if (isNearCorrectSpot && isRotationOk) {
+                  return (
+                    <Group key={`snap-${piece.id}`}>
+                      {/* Green glow at correct position */}
+                      <Circle
+                        x={piece.correctX + sprite.width / 2}
+                        y={piece.correctY + sprite.height / 2}
+                        radius={Math.max(sprite.width, sprite.height) * 0.6}
+                        fill="#10b981"
+                        opacity={0.3}
+                        listening={false}
+                      />
+                    </Group>
+                  );
+                }
+                return null;
+              })}
+            
             {sprites.status === 'ready' && sprites.sprites &&
               puzzleState.pieces.map((piece) => {
                 const sprite = sprites.sprites?.byId.get(piece.id);

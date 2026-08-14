@@ -87,6 +87,15 @@ app.prepare().then(() => {
         return;
       }
 
+      // ponytail: Check if this socket already joined - prevent double-join on reconnect
+      const existingPlayerId = socket.data.playerId as string | undefined;
+      if (existingPlayerId && record.players.has(existingPlayerId)) {
+        // Already joined, just return snapshot
+        ack({ ok: true, playerId: existingPlayerId, snapshot: roomSnapshot(record) });
+        console.log(`[room:join] Player ${existingPlayerId} already in room ${roomId}, returning snapshot`);
+        return;
+      }
+
       if (record.players.size >= MAX_PLAYERS_PER_ROOM) {
         ack({ ok: false, error: 'room_full' });
         return;
