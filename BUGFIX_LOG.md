@@ -1,5 +1,60 @@
 # 🐛 Bug Fixes & Features - Update Log
 
+## Date: August 14, 2026
+
+---
+
+## ✅ Bug #1: Progress Stuck at 1% - FIXED
+
+### 🔍 Root Cause:
+- Server calculates snap correctly and sets `isPlaced: true`
+- Server broadcasts `piece:dropped` event with `isPlaced` field
+- **Client receives but ignores `isPlaced` field** - only applied x, y, rotation, z
+
+### 🔧 Solution:
+```typescript
+// PuzzleBoard.tsx:108
+onPieceDropped: (payload) => {
+  puzzleState.applyRemote(payload.pieceId, {
+    x: payload.x,
+    y: payload.y,
+    rotation: payload.rotation,
+    isPlaced: payload.isPlaced, // ponytail: was missing
+    z: payload.z,
+  });
+},
+```
+
+---
+
+## ✅ Bug #2: Auto-Snap Not Working - FIXED
+
+### 🔍 Root Cause:
+Same as Bug #1 - piece doesn't snap visually because `isPlaced` flag not applied
+
+### 🔧 Solution:
+Same fix - adding `isPlaced` to `onPieceDropped` handler
+
+---
+
+## ✅ Bug #3: Shuffle Button Not Working - FIXED
+
+### 🔍 Root Cause:
+- Button calls `socket.resetRoom()` ✅
+- Server emits `room:sync` with shuffled pieces ✅
+- **Client missing `onRoomSync` callback handler**
+
+### 🔧 Solution:
+```typescript
+// PuzzleBoard.tsx:87-90
+onRoomSync: (snapshot) => {
+  console.log('[room:sync] Reshuffle received:', snapshot);
+  puzzleState.applyStates(snapshot.pieces); // ponytail: shuffle wasn't applying
+},
+```
+
+---
+
 ## Date: August 13, 2026
 
 ---

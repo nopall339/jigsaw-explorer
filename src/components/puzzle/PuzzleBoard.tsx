@@ -84,6 +84,10 @@ export default function PuzzleBoard({ room }: PuzzleBoardProps) {
       });
       setOnlinePlayers(players);
     },
+    onRoomSync: (snapshot) => {
+      console.log('[room:sync] Reshuffle received:', snapshot);
+      puzzleState.applyStates(snapshot.pieces); // ponytail: shuffle wasn't applying
+    },
     onPieceLocked: (pieceId, playerId) => {
       puzzleState.setLock(pieceId, playerId);
     },
