@@ -393,7 +393,17 @@ export default function PuzzleBoard({ room }: PuzzleBoardProps) {
                         y={piece.correctY + sprite.height / 2}
                         radius={Math.max(sprite.width, sprite.height) * 0.6}
                         fill="#10b981"
-                        opacity={0.3}
+                        opacity={0.6}
+                        listening={false}
+                      />
+                      {/* Add a ring for better visibility */}
+                      <Circle
+                        x={piece.correctX + sprite.width / 2}
+                        y={piece.correctY + sprite.height / 2}
+                        radius={Math.max(sprite.width, sprite.height) * 0.7}
+                        stroke="#10b981"
+                        strokeWidth={3}
+                        opacity={0.8}
                         listening={false}
                       />
                     </Group>
